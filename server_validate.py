@@ -2,6 +2,9 @@ import pandas as pd
 import subprocess
 import xtelnet
 import httplib2
+import time
+from selenium import webdriver
+
 
 def ping_check(ip):
     for i in ip:
@@ -36,15 +39,31 @@ def url_check(url):
         print("Website is down.")
 
 
+def find_text(url,search_text):
+    url="https://"+url
+    print(url)
+    driver = webdriver.Chrome(executable_path=r"C:\Users\91700\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.9_qbz5n2kfra8p0\LocalCache\local-packages\Python39\site-packages\chromedriver_win32\chromedriver",service_log_path=None)
+    driver.get(url);
+    time.sleep(10)
+    button = driver.find_element_by_link_text(search_text)
+    if button:
+        print("Search found !!")
+    else:
+        print("Search not found!!")
+    driver.close()
 def main():
     server =pd.read_excel(r"D:\codes\server_validate\server_input.xlsx")
-    ping_check(server['ping'].dropna())
+    #ping_check(server['ping'].dropna())
     #telnet_check(server['telnet'].dropna())
     for i in range(len(server.index)):
         if pd.isnull(server['url'][i]):
             continue
-        #print (server.loc[i,'url'])
-        url_check(server.loc[i,'url'])
+        #url_check(server.loc[i,'url'])
+        if pd.isnull(server['find text'][i]):
+            continue
+        #print(server.loc[i,'find text'])
+        find_text(server['url'][i],server.loc[i,'find text'])
+        
 
 if __name__=='__main__':
     main()
